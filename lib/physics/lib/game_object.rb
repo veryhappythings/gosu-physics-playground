@@ -1,6 +1,6 @@
 class GameObject
-  TURNSPEED = 4.5
-  attr_reader :x, :y
+  attr_reader :shape
+
   def self.image_filename
     "images/paddle.png"
   end
@@ -8,16 +8,27 @@ class GameObject
   def initialize(window, x, y)
     @window = window
     @image = Gosu::Image.new(@window, self.class.image_filename)
-    @x = x
-    @y = y
-    @vx = 0
-    @vy = 0
-    @angle = 0
+
+    body = CP::Body.new(10.0, 150.0)
+    shape_array = [
+      CP::Vec2.new(-25.0, -25.0),
+      CP::Vec2.new(-25.0, 25.0),
+      CP::Vec2.new(25.0, 1.0),
+      CP::Vec2.new(25.0, -1.0)
+    ]
+    @shape = CP::Shape::Poly.new(body, shape_array, CP::Vec2.new(0,0))
+    @shape.collision_type = :ship
+
+    @shape.body.p = CP::Vec2.new(0.0, 0.0) # position
+    @shape.body.v = CP::Vec2.new(0.0, 0.0) # velocity
+    @shape.body.a = (3*Math::PI/2.0) # angle in radians; faces towards top of screen
+
+    @window.space.add_body(body)
+    @window.space.add_shape(shape)
   end
 
-  def warp(x, y)
-    @x = x
-    @y = y
+  def warp(vect)
+    @shape.body.p = vect
   end
 
   def height
@@ -29,48 +40,47 @@ class GameObject
   end
 
   def top
-    @y
+    @shape.body.p.y
   end
 
   def bottom
-    @y + height
+    @shape.body.p.y + height
   end
 
   def left
-    @x
+    @shape.body.p.x
   end
 
   def right
-    @x + width
+    @shape.body.p.x + width
   end
 
   def turn_left
-    @angle -= GameObject::TURNSPEED
+    @shape.body.t -= 400.0/Physics::SUBSTEPS
   end
 
   def turn_right
-    @angle += GameObject::TURNSPEED
+    @shape.body.t += 400.0/Physics::SUBSTEPS
   end
 
   def accelerate
-    @vx += Gosu::offset_x(@angle, 0.5)
-    @vy += Gosu::offset_y(@angle, 0.5)
+    @shape.body.apply_force((@shape.body.a.radians_to_vec2 * (3000.0/Physics::SUBSTEPS)), CP::Vec2.new(0.0, 0.0))
   end
 
   def draw
-    @image.draw_rot @x, @y, 1, @angle
+    @image.draw_rot(@shape.body.p.x, @shape.body.p.y, 1, @shape.body.a.radians_to_gosu)
   end
 
   def update(dt)
-    @x += @vx
-    @y += @vy
-
-    @x %= 640
-    @y %= 480
-
-    @vx *= 0.95
-    @vy *= 0.95
+    @shape.body.reset_forces
+    validate_position
   end
+
+  # Wrap to the other side of the screen when we fly off the edge
+  def validate_position
+    @shape.body.p = CP::Vec2.new(@shape.body.p.x % @window.width, @shape.body.p.y % @window.height)
+  end
+
 
   def collides_with? other
     if not other.kind_of? GameObject
