@@ -9,10 +9,11 @@ class Window < Gosu::Window
     @space = CP::Space.new
     @space.damping = 0.8
 
-    @player = Player.new(self, 50, 10)
+    @player = Player.new(self, 100, 100)
     @objects = [@player]
 
     @dt = (1.0/60.0)
+    @time_to_reload = 0
   end
 
   def draw
@@ -40,6 +41,17 @@ class Window < Gosu::Window
         @player.turn_right
       end
       @space.step(@dt)
+    end
+
+    @time_to_reload += 1
+    if @time_to_reload > 60
+      @time_to_reload = 0
+      begin
+        root = File.dirname(File.expand_path(__FILE__))
+        load "#{root}/models/player.rb"
+        load "#{root}/lib/game_object.rb"
+      rescue
+      end
     end
   end
 
