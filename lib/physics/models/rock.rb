@@ -7,6 +7,7 @@ class Rock < GameObject
       CP::Vec2.new(15, 15),
       CP::Vec2.new(15, -15),
     ]
+  @mass = 5.0
 
   def initialize(window, x, y)
     super(window, x, y)

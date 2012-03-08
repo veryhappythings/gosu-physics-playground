@@ -23,8 +23,7 @@ class GameObject
     @image = Gosu::Image.new(@window, self.class.image_filename)
 
     # Bodies init with mass and inertia
-    # TODO: Auto-calculate inertia
-    body = CP::Body.new(self.class.mass, 150.0)
+    body = CP::Body.new(self.class.mass, CP.moment_for_poly(self.class.mass, self.class.shape_array, CP::Vec2.new(0, 0)))
 
     @shape = CP::Shape::Poly.new(body, self.class.shape_array, CP::Vec2.new(0,0))
     @shape.collision_type = self.class.collision_type
