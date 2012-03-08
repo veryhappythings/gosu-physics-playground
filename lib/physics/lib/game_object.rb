@@ -6,10 +6,11 @@ class GameObject
   inheritable_attributes :image_filename, :mass, :inertia, :shape_array, :collision_type
   @image_filename = "images/paddle.png"
   # Anti-clockwise
+  # Points to the right, because in radians, 0 degrees points right.
   @shape_array = [
-      CP::Vec2.new(0, -25),
+      CP::Vec2.new(25, 0),
+      CP::Vec2.new(-25, -25),
       CP::Vec2.new(-25, 25),
-      CP::Vec2.new(25, 25),
     ]
   @mass = 10.0
   @inertia = 150.0
@@ -22,6 +23,7 @@ class GameObject
     @image = Gosu::Image.new(@window, self.class.image_filename)
 
     # Bodies init with mass and inertia
+    # TODO: Auto-calculate inertia
     body = CP::Body.new(self.class.mass, 150.0)
 
     @shape = CP::Shape::Poly.new(body, self.class.shape_array, CP::Vec2.new(0,0))
@@ -29,7 +31,8 @@ class GameObject
 
     @shape.body.p = CP::Vec2.new(x, y) # position
     @shape.body.v = CP::Vec2.new(0.0, 0.0) # velocity
-    @shape.body.a = (3*Math::PI/2.0) # angle in radians; faces towards top of screen
+    #@shape.body.a = (3*Math::PI/2.0) # angle in radians; faces towards top of screen
+    @shape.body.a = 0.gosu_to_radians
     @shape.body.object = self # This allows you to access this object in collisions
 
     @window.space.add_body(body)
@@ -62,18 +65,6 @@ class GameObject
 
   def right
     @shape.body.p.x + width
-  end
-
-  def turn_left
-    @shape.body.t -= GameObject::TURNSPEED/Physics::SUBSTEPS
-  end
-
-  def turn_right
-    @shape.body.t += GameObject::TURNSPEED/Physics::SUBSTEPS
-  end
-
-  def accelerate
-    @shape.body.apply_force((@shape.body.a.radians_to_vec2 * (GameObject::ACCERATION/Physics::SUBSTEPS)), CP::Vec2.new(0.0, 0.0))
   end
 
   def draw
@@ -118,7 +109,7 @@ class GameObject
     self.class.shape_array.each_with_index do |vector, i|
       prev = self.class.shape_array[i-1]
       @window.translate(@shape.body.p.x, @shape.body.p.y) do
-        @window.rotate(@shape.body.a.radians_to_gosu, 0, 0) do
+        @window.rotate(@shape.body.a.radians_to_degrees, 0, 0) do
           @window.draw_line(
             prev.x,
             prev.y,
