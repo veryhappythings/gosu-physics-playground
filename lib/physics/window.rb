@@ -13,13 +13,10 @@ class Window < Gosu::Window
     @rock = Rock.new(self, 300, 300)
     @objects = [
       @player,
-      Rock.new(self, 200, 200),
-      Rock.new(self, 250, 250),
-      Rock.new(self, 250, 300),
-      Rock.new(self, 300, 300),
-      Rock.new(self, 400, 400),
-      Rock.new(self, 500, 500),
     ]
+    (1..30).each do |i|
+      @objects << Rock.new(self, rand(640), rand(480))
+    end
 
     @dt = (1.0/60.0)
     @time_to_reload = 0
