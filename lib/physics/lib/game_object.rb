@@ -44,11 +44,19 @@ class GameObject
   end
 
   def height
-    @image.height
+    if @image
+      @image.height
+    else
+      @height
+    end
   end
 
   def width
-    @image.width
+    if @image
+      @image.width
+    else
+      @width
+    end
   end
 
   def top
@@ -96,14 +104,14 @@ class GameObject
   # Debug function to draw bounding box
   def draw_bounding_box
     # Draw the bounding box of the shape
-    top_left, top_right, bottom_left, bottom_right = self.rotate
-    @window.draw_quad(
-      top_left.x, top_left.y, Colours::RED,
-      top_right.x, top_right.y, Colours::RED,
-      bottom_left.x, bottom_left.y, Colours::RED,
-      bottom_right.x, bottom_right.y, Colours::RED,
-      z=0
-    )
+#    top_left, top_right, bottom_left, bottom_right = self.rotate
+#    @window.draw_quad(
+#      top_left.x, top_left.y, Colours::RED,
+#      top_right.x, top_right.y, Colours::RED,
+#      bottom_left.x, bottom_left.y, Colours::RED,
+#      bottom_right.x, bottom_right.y, Colours::RED,
+#      z=0
+#    )
 
     # Draw a wireframe of the shape
     self.class.shape_array.each_with_index do |vector, i|

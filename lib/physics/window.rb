@@ -14,7 +14,7 @@ class Window < Gosu::Window
     @objects = [
       @player,
     ]
-    (1..30).each do |i|
+    (1..100).each do |i|
       @objects << Rock.new(self, rand(640), rand(480))
     end
 
