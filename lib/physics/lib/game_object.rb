@@ -1,6 +1,6 @@
 class GameObject
   include InheritableAttributes
-  TURNSPEED = 400
+  TURNSPEED = 20000
   ACCERATION = 3000
 
   inheritable_attributes :image_filename, :mass, :inertia, :shape_array, :collision_type
@@ -12,7 +12,7 @@ class GameObject
       CP::Vec2.new(-25, -25),
       CP::Vec2.new(-25, 25),
     ]
-  @mass = 10.0
+  @mass = 50.0
   @inertia = 150.0
   @collision_type = :ship
 
