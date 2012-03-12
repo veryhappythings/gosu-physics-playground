@@ -3,6 +3,7 @@ GEM
   specs:
     chipmunk (5.3.4.5)
     gosu (0.7.37)
+    require_all (1.2.1)
 
 PLATFORMS
   ruby
@@ -10,3 +11,4 @@ PLATFORMS
 DEPENDENCIES
   chipmunk
   gosu
+  require_all

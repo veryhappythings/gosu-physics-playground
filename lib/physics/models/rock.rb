@@ -1,6 +1,4 @@
 class Rock < GameObject
-  @image_filename = "images/ship.png"
-
   @shape_array = [
       CP::Vec2.new(-15, -15),
       CP::Vec2.new(-15, 15),
@@ -13,7 +11,6 @@ class Rock < GameObject
     super(window, x, y)
     # Limit velocity
     @shape.body.w_limit = 0.3
-    @image = nil
     @width = @height = 30
   end
 

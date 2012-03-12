@@ -3,8 +3,7 @@ class GameObject
   TURNSPEED = 20000
   ACCERATION = 3000
 
-  inheritable_attributes :image_filename, :mass, :inertia, :shape_array, :collision_type
-  @image_filename = "images/paddle.png"
+  inheritable_attributes :mass, :inertia, :shape_array, :collision_type
   # Anti-clockwise
   # Points to the right, because in radians, 0 degrees points right.
   @shape_array = [
@@ -13,49 +12,36 @@ class GameObject
       CP::Vec2.new(-25, 25),
     ]
   @mass = 50.0
-  @inertia = 150.0
   @collision_type = :ship
 
-  attr_reader :shape
+  attr_reader :shape, :height, :width
 
   def initialize(window, x, y)
     @window = window
-    @image = Gosu::Image.new(@window, self.class.image_filename)
 
     # Bodies init with mass and inertia
-    body = CP::Body.new(self.class.mass, CP.moment_for_poly(self.class.mass, self.class.shape_array, CP::Vec2.new(0, 0)))
+    body = CP::Body.new(
+      self.class.mass,
+      CP.moment_for_poly(self.class.mass, self.class.shape_array, CP::Vec2.new(0, 0))
+    )
 
     @shape = CP::Shape::Poly.new(body, self.class.shape_array, CP::Vec2.new(0,0))
     @shape.collision_type = self.class.collision_type
 
     @shape.body.p = CP::Vec2.new(x, y) # position
     @shape.body.v = CP::Vec2.new(0.0, 0.0) # velocity
-    #@shape.body.a = (3*Math::PI/2.0) # angle in radians; faces towards top of screen
     @shape.body.a = 0.gosu_to_radians
     @shape.body.object = self # This allows you to access this object in collisions
 
     @window.space.add_body(body)
     @window.space.add_shape(shape)
+
+    @height = 10
+    @width = 10
   end
 
   def warp(vect)
     @shape.body.p = vect
-  end
-
-  def height
-    if @image
-      @image.height
-    else
-      @height
-    end
-  end
-
-  def width
-    if @image
-      @image.width
-    else
-      @width
-    end
   end
 
   def top
@@ -76,7 +62,6 @@ class GameObject
 
   def draw
     draw_bounding_box
-    #@image.draw_rot(@shape.body.p.x, @shape.body.p.y, 1, @shape.body.a.radians_to_gosu)
   end
 
   def update(dt)

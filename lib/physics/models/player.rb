@@ -1,10 +1,17 @@
 class Player < GameObject
-  @image_filename = "images/ship.png"
+  @shape_array = [
+      CP::Vec2.new(25, 0),
+      CP::Vec2.new(-25, -25),
+      CP::Vec2.new(-25, 25),
+    ]
+  @mass = 50.0
+  @collision_type = :ship
 
   def initialize(window, x, y)
     super(window, x, y)
     # Limit velocity
     @shape.body.w_limit = 0.3
+    @width = @height = 50
   end
 
   def turn_left
